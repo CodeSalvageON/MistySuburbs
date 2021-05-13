@@ -1,0 +1,28 @@
+body {
+  background-color: black;
+}
+
+.normal {
+  color: limegreen;
+}
+
+.trophy {
+  color: gold;
+}
+
+.chat {
+  color: purple;
+}
+
+#command-input {
+  width: 80vw;
+  border: hidden;
+  font-weight: bold;
+  color: limegreen;
+  font-family: monospace;
+  background-color: black;
+}
+
+#command-input:focus {
+  outline: 0;
+}
