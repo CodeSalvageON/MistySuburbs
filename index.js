@@ -62,6 +62,37 @@ app.get('/get-chat', function (req, res) {
   res.send(chat_log);
 });
 
+app.post('/get-sector', async function (req, res) {
+  console.log("Sector Request");
+
+  const sector_vertical = req.body.vertical;
+  const sector_horizontal = req.body.horizontal;
+
+  const suiteRef = db.collection("dasmist").doc("chatlog");
+  const mist = await suiteRef.get();
+
+  const mist_array = mist.data().log.split(splitter);
+
+  for (i = 0; i < mist_array.length; i++) {
+    const mist_array_vertical = mist_array[i].vertical;
+    const mist_array_horizontal = mist_array[i].horizontal;
+    const mist_array_description = mist_array[i].description;
+
+    if (mist_array_vertical === sector_vertical && mist_array_horizontal === sector_horizontal) {
+      res.send(mist_array_description);
+
+      console.log("Sent data.");
+    }
+
+    else {
+      // Pass
+      console.log("No data found.");
+    }
+  }
+
+  res.send("");
+});
+
 app.post('/chat', function (req, res) {
   const message = req.body.message;
   const cleaned_message = sanitizer.escape(message);

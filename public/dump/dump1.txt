@@ -1,0 +1,24 @@
+if (localStorage.getItem("mistysuburbs-save-sector-vertical") === "" || localStorage.getItem("mistysuburbs-save-sector-vertical") === null || localStorage.getItem("mistysuburbs-save-sector-vertical") === undefined) {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", "0");
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", "0");
+      }
+
+      else {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-vertical")) + parseInt("1")));
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-horizontal")) + parseInt("1")));
+
+        fetch ("/get-sector", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            vertical : localStorage.getItem("mistysuburbs-save-sector-vertical"),
+            horizontal : localStorage.getItem("mistysuburbs-save-sector-horizontal")
+          })
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data === "" || data === null || data === undefined) {
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
+          }
