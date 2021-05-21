@@ -107,7 +107,116 @@ $("#command-form").submit(function () {
           throw error;
         });
       }
+    }
+
+    else if (command_input.value.toLowerCase() === "east" || command_input.value.toLowerCase() === "e") {
+      if (localStorage.getItem("mistysuburbs-save-sector-vertical") === "" || localStorage.getItem("mistysuburbs-save-sector-vertical") === null || localStorage.getItem("mistysuburbs-save-sector-vertical") === undefined) {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", "0");
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", "0");
+      }
+
+      else {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-vertical")) + parseInt("0")));
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-horizontal")) + parseInt("1")));
+
+        fetch ("/get-sector", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            vertical : localStorage.getItem("mistysuburbs-save-sector-vertical"),
+            horizontal : localStorage.getItem("mistysuburbs-save-sector-horizontal")
+          })
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data === "" || data === null || data === undefined) {
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+      }
+    }
+
+    else if (command_input.value.toLowerCase() === "west" || command_input.value.toLowerCase() === "w") {
+      if (localStorage.getItem("mistysuburbs-save-sector-vertical") === "" || localStorage.getItem("mistysuburbs-save-sector-vertical") === null || localStorage.getItem("mistysuburbs-save-sector-vertical") === undefined) {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", "0");
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", "0");
+      }
+
+      else {
+        localStorage.setItem("mistysuburbs-save-sector-vertical", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-vertical")) + parseInt("0")));
+        localStorage.setItem("mistysuburbs-save-sector-horizontal", String(parseInt(localStorage.getItem("mistysuburbs-save-sector-horizontal")) - parseInt("1")));
+
+        fetch ("/get-sector", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            vertical : localStorage.getItem("mistysuburbs-save-sector-vertical"),
+            horizontal : localStorage.getItem("mistysuburbs-save-sector-horizontal")
+          })
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data === "" || data === null || data === undefined) {
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+      }
+    }
+
+    else if (command_input.value.toLowerCase() === "show_sector") {
+      game_text.innerHTML = game_text.innerHTML + "<span class='location'><pre>Sector Vertical: " + localStorage.getItem("mistysuburbs-save-sector-vertical") + ", Sector Horizontal: " + localStorage.getItem("mistysuburbs-save-sector-horizontal") + "</pre></span>";
+    }
+
+    else if (command_input.value.toLowerCase() === "get_health") {
+      game_text.innerHTML = game_text.innerHTML + "<span class='location'><pre>Health: " + localStorage.getItem("mistysuburbs-save-health") + "</pre></span>";
+    }
+
+    else if (command_input.value.toLowerCase() === "inventory") {
+      game_text.innerHTML = game_text.innerHTML + "<span class='location'><pre>Inventory: " + localStorage.getItem("mistysuburbs-save-inventory") + "</pre></span>";
     }  
+
+    else if (command_input.value.toLowerCase().startsWith("take")) {
+      if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "all".toLowerCase()) {
+        fetch ("/get-items-from-sector", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            vertical : localStorage.getItem("mistysuburbs-save-sector-vertical"),
+            horizontal : localStorage.getItem("mistysuburbs-save-sector-horizontal"),
+            taken : "all"
+          })
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data === "" || data === null || data === undefined) {
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There's nothing here you can take. Except for your own life, of course.</pre></span>";
+          }
+
+          else {
+            localStorage.setItem("mistysuburbs-save-inventory", localStorage.getItem("mistysuburbs-save-inventory") + ", " + data);
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+      }
+
+      else {
+
+      }
+    }
 
     else if (command_input.value.toLowerCase().startsWith("chat")) {
       fetch ("/chat", {

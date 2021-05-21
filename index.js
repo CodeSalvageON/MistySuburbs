@@ -62,6 +62,73 @@ app.get('/get-chat', function (req, res) {
   res.send(chat_log);
 });
 
+app.post('/get-items-from-sector', async function (req, res) {
+  const sector_vertical = req.body.vertical;
+  const sector_horizontal = req.body.horizontal;
+  const item_taken = req.body.taken;
+  
+  const suiteRef = db.collection("dasmist").doc("chatlog");
+  const mist = await suiteRef.get();
+
+  const mist_array = mist.data().log.split(splitter);
+
+  for (i = 0; i < mist_array.length; i++) {
+    const mist_array_vertical = mist_array[i].vertical;
+    const mist_array_horizontal = mist_array[i].horizontal;
+    const mist_array_description = mist_array[i].description;
+
+    if (mist_array_vertical === sector_vertical && mist_array_horizontal === sector_horizontal) {
+      if (item_taken === "all") {
+        const mist_array_item_part = mist_array_description.split("On the floor there is ");
+        let save_placeholder = 0;
+
+        save_placeholder = mist_array_item_part[1];
+
+        mist_array[i].description = mist_array[i].description.replace("On the floor there is " + mist_array_item_part[1], "");
+
+        await suiteRef.set({
+          log : JSON.stringify(mist_array)
+        });
+
+        if (save_placeholder === "" || save_placeholder === null || save_placeholder === undefined) {
+          res.send("");
+        }
+
+        else {
+          res.send(save_placeholder);
+        }
+      }
+
+      else {
+        const mist_array_item_part = mist_array_description.split("On the floor there is ");
+        let save_placeholder = 0;
+
+        save_placeholder = mist_array_item_part[1];
+
+        mist_array[i].description = mist_array[i].description.replace(item_taken + ",", "");
+
+        await suiteRef.set({
+          log : JSON.stringify(mist_array)
+        });
+
+        if (save_placeholder.includes(item_taken)) {
+          res.send(item_taken);
+        }
+
+        else {
+          res.send("");
+        }
+      }
+    }
+
+    else {
+      // Pass
+    }
+  }
+
+  res.send("");
+});
+
 app.post('/get-sector', async function (req, res) {
   console.log("Sector Request");
 
