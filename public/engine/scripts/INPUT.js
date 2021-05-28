@@ -70,6 +70,11 @@ $("#command-form").submit(function () {
           if (data === "" || data === null || data === undefined) {
             game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
           }
+
+          else {
+            drawStuff(data);
+            drawItems(data);
+          }
         })
         .catch(error => {
           throw error;
@@ -101,6 +106,11 @@ $("#command-form").submit(function () {
         .then(data => {
           if (data === "" || data === null || data === undefined) {
             game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
+          }
+
+          else {
+            drawStuff(data);
+            drawItems(data);
           }
         })
         .catch(error => {
@@ -134,6 +144,11 @@ $("#command-form").submit(function () {
           if (data === "" || data === null || data === undefined) {
             game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
           }
+
+          else {
+            drawStuff(data);
+            drawItems(data);
+          }
         })
         .catch(error => {
           throw error;
@@ -165,6 +180,11 @@ $("#command-form").submit(function () {
         .then(data => {
           if (data === "" || data === null || data === undefined) {
             game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There...seems to be nothing here.</pre></span>";
+          }
+
+          else {
+            drawStuff(data);
+            drawItems(data);
           }
         })
         .catch(error => {
@@ -206,6 +226,10 @@ $("#command-form").submit(function () {
 
           else {
             localStorage.setItem("mistysuburbs-save-inventory", localStorage.getItem("mistysuburbs-save-inventory") + ", " + data);
+
+            const substr_one = command_input.value.substr(command_input.value.indexOf(" ") + 1);
+
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>You took " + substr_one + ".</pre></span>";
           }
         })
         .catch(error => {
@@ -214,7 +238,276 @@ $("#command-form").submit(function () {
       }
 
       else {
+        fetch ("/get-items-from-sector", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            vertical : localStorage.getItem("mistysuburbs-save-sector-vertical"),
+            horizontal : localStorage.getItem("mistysuburbs-save-sector-horizontal"),
+            taken : command_input.value.substr(command_input.value.indexOf(" ") + 1)
+          })
+        })
+        .then(response => response.text())
+        .then(data => {
+          if (data === "" || data === null || data === undefined) {
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>There's nothing here you can take. Except for your own life, of course.</pre></span>";
+          }
 
+          else {
+            localStorage.setItem("mistysuburbs-save-inventory", localStorage.getItem("mistysuburbs-save-inventory") + ", " + data);
+
+            const substr_one = command_input.value.substr(command_input.value.indexOf(" ") + 1);
+
+            game_text.innerHTML = game_text.innerHTML + "<span class='normal'><pre>You took " + substr_one + ".</pre></span>";
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+      }
+    }
+
+    else if (command_input.value.toLowerCase().startsWith("build")) {
+      if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "trench".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 10) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "trench"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "wall".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 30) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "wall"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a wall!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "tent".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 10) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "tent"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a tent!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "phone_booth".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 20) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "phone_booth"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a phone booth!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "bench".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 20) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "bench"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a bench!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "factory".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 90) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "factory"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a factory!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "mansion".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 50) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "mansion"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a mansion!</pre></span>"
+        }
+      }
+
+      else if (command_input.value.substr(command_input.value.indexOf(" ") + 1) === "house".toLowerCase()) {
+        if (parseInt(localStorage.getItem("mistysuburbs-save-mistyplast")) > 30) {
+          saw_sound.cloneNode(true).play();
+
+          fetch ("/build-structure", {
+            method : "POST",
+            headers : {
+              "Content-Type" : "application/json"
+            },
+            body : JSON.stringify({
+              vertical : localStorage.getItem("mistysuburbs-save-vertical"),
+              horizontal : localStorage.getItem("mistysuburbs-save-horizontal"),
+              structure : "house"
+            })
+          })
+          .then(response => response.text())
+          .then(data => {
+            drawStuff(data);
+            drawItems(data);
+          })
+          .catch(error => {
+            throw error;
+          });
+        }
+
+        else {
+          game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>You don't have enough mistyplast to build a house!</pre></span>"
+        }
+      }
+
+      else {
+        game_text.innerHTML = game_text.innerHTML + "<span class='error'><pre>That isn't a valid structure to build.</pre></span>";
       }
     }
 

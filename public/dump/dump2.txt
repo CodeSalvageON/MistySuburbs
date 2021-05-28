@@ -1,0 +1,1 @@
+<script src="https://codesalvageon.github.io/magichat/scripts/restraint.js"></script>

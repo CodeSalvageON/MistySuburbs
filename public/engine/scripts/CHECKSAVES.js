@@ -4,6 +4,7 @@ const save_sector_vertical = localStorage.getItem("mistysuburbs-save-sector-vert
 const save_sector_horizontal = localStorage.getItem("mistysuburbs-save-sector-horizontal");
 const save_inventory = localStorage.getItem("mistysuburbs-save-inventory");
 const save_health = localStorage.getItem("mistysuburbs-save-health");
+const save_mistyplast = localStorage.getItem("mistysuburbs-save-mistyplast");
 
 $(document).ready(function () {
   if (save_state === "saved") {

@@ -129,6 +129,107 @@ app.post('/get-items-from-sector', async function (req, res) {
   res.send("");
 });
 
+app.post('/build-structure', async function (req, res) {
+  const sector_vertical = req.body.vertical;
+  const sector_horizontal = req.body.horizontal;
+  const structure_built = req.body.structure;
+
+  const suiteRef = db.collection("dasmist").doc("chatlog");
+  const mist = await suiteRef.get();
+
+  const mist_array = mist.data().log.split(splitter);
+
+  for (i = 0; i < mist_array.length; i++) {
+    const mist_array_vertical = mist_array[i].vertical;
+    const mist_array_horizontal = mist_array[i].horizontal;
+    const mist_array_description = mist_array[i].description;
+
+    const mist_array_description_split = mist_array_description.split("On the floor there is ");
+    const mist_array_description_split_struct = mist_array_description_split[0];
+    const mist_array_description_split_item = mist_array_description_split[1];
+
+    let thingy = "";
+
+    if (mist_array_description_split_item === "" || mist_array_description_split_item === null || mist_array_description_split_item === undefined) {
+      thingy = "nothing."
+    }
+
+    else {
+      thingy = mist_array_description_split_item;
+    }
+
+    if (mist_array_vertical === sector_vertical && mist_array_horizontal === sector_horizontal) {
+      if (mist_array_description.includes("trench") || mist_array_description.includes("wall") || mist_array_description.includes("tent") || mist_array_description.includes("phone_booth") || mist_array_description.includes("bench") || mist_array_description.includes("factory") || mist_array_description.includes("mansion") || mist_array_description.includes("house")) {
+        res.send("exists");
+      }
+
+      else {
+        if (structure_built === "trench") {
+          mist_array[i].description = "trench" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "wall") {
+          mist_array[i].description = "wall" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "tent") {
+          mist_array[i].description = "wall" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "phone_booth") {
+          mist_array[i].description = "phone_booth" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "bench") {
+          mist_array[i].description = "bench" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "factory") {
+          mist_array[i].description = "factory" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "mansion") {
+          mist_array[i].description = "mansion" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else if (structure_built === "house") {
+          mist_array[i].description = "house" + " On the floor there is " + thingy;
+
+          res.send(mist_array[i].description);
+        }
+
+        else {
+          res.send("");
+        }
+
+        await suiteRef.set({
+          log : mist_array
+        });
+      }
+    }
+
+    else {
+      // Pass
+    }
+  }
+
+  res.send("");
+});
+
 app.post('/get-sector', async function (req, res) {
   console.log("Sector Request");
 
